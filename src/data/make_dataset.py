@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
-
-import numpy as np
 import os
+from pathlib import Path
+
+import click
+import numpy as np
+from dotenv import find_dotenv, load_dotenv
 
 
 def transform_mnist(
@@ -17,7 +17,8 @@ def transform_mnist(
         f = os.path.join(directory_in, filename)
         data = np.load(f)
         data = dict(
-            zip(("{}".format(item) for item in data), (data[item] for item in data))
+            zip(("{}".format(item) for item in data),
+                (data[item] for item in data))
         )
         for iter, img in enumerate(data["images"]):
             data["images"][iter] = (img - img.mean()) / img.std()
