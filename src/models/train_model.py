@@ -7,7 +7,9 @@ import torch
 from model import MyAwesomeModel
 from torch import nn
 from torch.utils.data import ConcatDataset, DataLoader, Dataset
-
+import hydra
+import logging
+log = logging.getLogger(__name__)
 
 @click.group()
 def cli():
@@ -64,29 +66,31 @@ def mnist(directory: str = "data/processed/corruptmnist"):
     return train, test
 
 
-@click.command()
-@click.option("--lr",
-              default=1e-3,
-              help="learning rate to use for training")
-@click.option("--optimizer",
-              default=None,
-              help="optimizer to use for training")
-@click.option("--epochs",
-              default=5,
-              help="epochs to use for training")
-def train(lr, optimizer, epochs):
+# @click.command()
+# @click.option("--lr",
+#               default=1e-3,
+#               help="learning rate to use for training")
+# @click.option("--optimizer",
+#               default=None,
+#               help="optimizer to use for training")
+# @click.option("--epochs",
+#               default=5,
+#               help="epochs to use for training")
+
+@hydra.main(config_path="../conf", config_name="default_config.yaml")              
+def train(config):
     print("Training day and night")
-    print(lr)
+    print(config.train.learning_rate)
 
     model = MyAwesomeModel()
     trainloader, _ = mnist()
 
     criterion = nn.NLLLoss()
-    if optimizer is None:
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    if config.train.optimizer is 'Adam':
+        optimizer = torch.optim.Adam(model.parameters(), lr=config.train.learning_rate)
 
     loss_vector = []
-    for e in range(epochs):
+    for e in range(config.train.epochs):
         loss_sum = 0
         model.train()
         for images, labels in trainloader:

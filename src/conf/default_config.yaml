@@ -1,0 +1,3 @@
+defaults:
+    - model: config.yaml
+    - train: config.yaml
